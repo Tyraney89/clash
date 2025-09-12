@@ -1,3 +1,3 @@
-pub mod clash_api;
+pub mod player_service;
 
-pub use clash_api::*;
+pub use player_service::*;
