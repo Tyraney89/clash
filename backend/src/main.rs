@@ -1,4 +1,5 @@
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, middleware::Logger};
+use actix_cors::Cors;
 use clash_backend::{handlers, repositories, services, Settings};
 
 #[get("/")]
@@ -29,7 +30,15 @@ async fn main() -> std::io::Result<()> {
     let player_service = services::PlayerService::new(clash_repository);
     
     HttpServer::new(move || {
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header()
+            .max_age(3600);
+
         App::new()
+            .wrap(cors)
+            .wrap(Logger::default())
             .app_data(web::Data::new(player_service.clone()))
             .service(hello)
             .service(handlers::health::health)
