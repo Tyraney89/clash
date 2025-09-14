@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { Search, Trophy, Sword, Shield, Users, Zap } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface Player {
   tag: string;
@@ -92,47 +96,48 @@ export default function Home() {
 
         {/* Search Section */}
         <div className="max-w-2xl mx-auto mb-12">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="Enter player tag (e.g., #2JG82JV8G or 2JG82JV8G)"
-                  value={playerTag}
-                  onChange={(e) => setPlayerTag(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-8">
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Enter player tag (e.g., #2JG82JV8G or 2JG82JV8G)"
+                    value={playerTag}
+                    onChange={(e) => setPlayerTag(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    className="text-white placeholder-white/70 bg-white/20 border-white/30"
+                  />
+                </div>
+                <Button
+                  onClick={searchPlayer}
+                  disabled={loading || !playerTag.trim()}
+                  className="px-6 py-3"
+                >
+                  <Search className="w-5 h-5" />
+                  {loading ? "Searching..." : "Search"}
+                </Button>
               </div>
-              <button
-                onClick={searchPlayer}
-                disabled={loading || !playerTag.trim()}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
-              >
-                <Search className="w-5 h-5" />
-                {loading ? "Searching..." : "Search"}
-              </button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Error Message */}
         {error && (
           <div className="max-w-2xl mx-auto mb-8">
-            <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-red-200">
-              <p className="font-semibold">Error:</p>
-              <p>{error}</p>
-            </div>
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           </div>
         )}
 
         {/* Player Data */}
         {player && (
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              {/* Player Header */}
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-2">{player.name}</h2>
+            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+              <CardHeader className="text-center mb-8">
+                <CardTitle className="text-3xl font-bold text-white mb-2">{player.name}</CardTitle>
                 <p className="text-blue-200 text-lg">#{player.tag}</p>
                 <div className="flex items-center justify-center gap-4 mt-4">
                   <div className="flex items-center gap-2 text-yellow-400">
@@ -144,80 +149,78 @@ export default function Home() {
                     <span className="font-semibold">{player.arena.name}</span>
                   </div>
                 </div>
-              </div>
-
-              {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Trophies */}
-                <div className="bg-white/10 rounded-xl p-6 text-center">
-                  <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-                  <h3 className="text-white font-semibold mb-2">Trophies</h3>
-                  <p className="text-2xl font-bold text-yellow-400">{player.trophies.toLocaleString()}</p>
-                  <p className="text-sm text-blue-200">Best: {player.bestTrophies.toLocaleString()}</p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* Trophies */}
+                  <Card className="bg-white/10 rounded-xl p-6 text-center">
+                    <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
+                    <h3 className="text-white font-semibold mb-2">Trophies</h3>
+                    <p className="text-2xl font-bold text-yellow-400">{player.trophies.toLocaleString()}</p>
+                    <p className="text-sm text-blue-200">Best: {player.bestTrophies.toLocaleString()}</p>
+                  </Card>
+                  {/* Battle Stats */}
+                  <Card className="bg-white/10 rounded-xl p-6 text-center">
+                    <Sword className="w-8 h-8 text-red-400 mx-auto mb-3" />
+                    <h3 className="text-white font-semibold mb-2">Battles</h3>
+                    <p className="text-2xl font-bold text-red-400">{player.battleCount.toLocaleString()}</p>
+                    <p className="text-sm text-blue-200">Wins: {player.wins.toLocaleString()}</p>
+                  </Card>
+                  {/* Win Rate */}
+                  <Card className="bg-white/10 rounded-xl p-6 text-center">
+                    <Zap className="w-8 h-8 text-green-400 mx-auto mb-3" />
+                    <h3 className="text-white font-semibold mb-2">Win Rate</h3>
+                    <p className="text-2xl font-bold text-green-400">
+                      {player.battleCount > 0 ? Math.round((player.wins / player.battleCount) * 100) : 0}%
+                    </p>
+                    <p className="text-sm text-blue-200">Losses: {player.losses.toLocaleString()}</p>
+                  </Card>
+                  {/* Streaks */}
+                  <Card className="bg-white/10 rounded-xl p-6 text-center">
+                    <Shield className="w-8 h-8 text-purple-400 mx-auto mb-3" />
+                    <h3 className="text-white font-semibold mb-2">Streaks</h3>
+                    <p className="text-2xl font-bold text-purple-400">{player.winStreak}</p>
+                    <p className="text-sm text-blue-200">Best: {player.bestWinStreak}</p>
+                  </Card>
                 </div>
-
-                {/* Battle Stats */}
-                <div className="bg-white/10 rounded-xl p-6 text-center">
-                  <Sword className="w-8 h-8 text-red-400 mx-auto mb-3" />
-                  <h3 className="text-white font-semibold mb-2">Battles</h3>
-                  <p className="text-2xl font-bold text-red-400">{player.battleCount.toLocaleString()}</p>
-                  <p className="text-sm text-blue-200">Wins: {player.wins.toLocaleString()}</p>
+                {/* Additional Stats */}
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="bg-white/5 rounded-lg p-4">
+                    <h4 className="text-white font-semibold mb-2">Three Crown Wins</h4>
+                    <p className="text-xl text-yellow-400">{player.threeCrownWins.toLocaleString()}</p>
+                  </Card>
+                  <Card className="bg-white/5 rounded-lg p-4">
+                    <h4 className="text-white font-semibold mb-2">Total Donations</h4>
+                    <p className="text-xl text-blue-400">{player.totalDonations.toLocaleString()}</p>
+                  </Card>
+                  <Card className="bg-white/5 rounded-lg p-4">
+                    <h4 className="text-white font-semibold mb-2">Clan</h4>
+                    <p className="text-xl text-green-400">
+                      {player.clan ? player.clan.name : "No Clan"}
+                    </p>
+                  </Card>
                 </div>
-
-                {/* Win Rate */}
-                <div className="bg-white/10 rounded-xl p-6 text-center">
-                  <Zap className="w-8 h-8 text-green-400 mx-auto mb-3" />
-                  <h3 className="text-white font-semibold mb-2">Win Rate</h3>
-                  <p className="text-2xl font-bold text-green-400">
-                    {player.battleCount > 0 ? Math.round((player.wins / player.battleCount) * 100) : 0}%
-                  </p>
-                  <p className="text-sm text-blue-200">Losses: {player.losses.toLocaleString()}</p>
-                </div>
-
-                {/* Streaks */}
-                <div className="bg-white/10 rounded-xl p-6 text-center">
-                  <Shield className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-                  <h3 className="text-white font-semibold mb-2">Streaks</h3>
-                  <p className="text-2xl font-bold text-purple-400">{player.winStreak}</p>
-                  <p className="text-sm text-blue-200">Best: {player.bestWinStreak}</p>
-                </div>
-              </div>
-
-              {/* Additional Stats */}
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white/5 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Three Crown Wins</h4>
-                  <p className="text-xl text-yellow-400">{player.threeCrownWins.toLocaleString()}</p>
-                </div>
-                <div className="bg-white/5 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Total Donations</h4>
-                  <p className="text-xl text-blue-400">{player.totalDonations.toLocaleString()}</p>
-                </div>
-                <div className="bg-white/5 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Clan</h4>
-                  <p className="text-xl text-green-400">
-                    {player.clan ? player.clan.name : "No Clan"}
-                  </p>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
         {/* Instructions */}
         {!player && !loading && (
           <div className="max-w-2xl mx-auto text-center">
-            <div className="bg-white/5 rounded-xl p-8 border border-white/10">
-              <h3 className="text-xl font-semibold text-white mb-4">How to use:</h3>
-              <ol className="text-blue-200 space-y-2 text-left">
-                <li>1. Enter a Clash Royale player tag (with or without # symbol)</li>
-                <li>2. Click "Search" or press Enter</li>
-                <li>3. View detailed player statistics</li>
-              </ol>
-              <p className="text-sm text-blue-300 mt-4">
-                Note: Make sure your Rust backend is running on localhost:8080
-              </p>
-            </div>
+            <Card className="bg-white/5 rounded-xl border-white/10">
+              <CardContent className="p-8">
+                <h3 className="text-xl font-semibold text-white mb-4">How to use:</h3>
+                <ol className="text-blue-200 space-y-2 text-left">
+                  <li>1. Enter a Clash Royale player tag (with or without # symbol)</li>
+                  <li>2. Click "Search" or press Enter</li>
+                  <li>3. View detailed player statistics</li>
+                </ol>
+                <p className="text-sm text-blue-300 mt-4">
+                  Note: Make sure your Rust backend is running on localhost:8080
+                </p>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

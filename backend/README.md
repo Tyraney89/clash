@@ -1,5 +1,7 @@
 # Clash Royale Stats API
 
+> **Note:** This project is a simple experiment to explore building a web API using the Rust Actix-Web framework. It is not intended for production use, but as a learning and prototyping exercise.
+
 A professional Rust backend API for fetching Clash Royale player statistics using the official Clash Royale API.
 
 ## Project Structure

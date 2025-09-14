@@ -1,5 +1,7 @@
 # Clash Royale Stats Website
 
+> **Note:** This project is a simple experiment to explore building a full-stack web app using Rust (Actix-Web) for the backend and Next.js with shadcn/ui for the frontend. It is not intended for production use, but as a learning and prototyping exercise.
+
 A full-stack web application focused on Clash Royale player statistics, built with Next.js (frontend) and Rust Actix-Web (backend).
 
 ## Project Structure
